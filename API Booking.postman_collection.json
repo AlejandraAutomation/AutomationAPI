@@ -1,0 +1,384 @@
+{
+	"info": {
+		"_postman_id": "906a4ceb-8bb6-4cd4-a091-d613ceb2d7c6",
+		"name": "API Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27539613"
+	},
+	"item": [
+		{
+			"name": "Crear Reserva",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar que el código de estado sea 200 \", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar que el ID de reserva no sea nulo\", () => {\r",
+							"    var jsonData = pm.response.json()\r",
+							"    var bookingId = jsonData.bookingid\r",
+							"\r",
+							" //Guardo la variable bookingId\r",
+							"  pm.environment.set(\"BookingId\",bookingId );\r",
+							"\r",
+							"//me aseguro que no sea null el booking id\r",
+							"  pm.expect(jsonData.bookingid).to.not.be.null\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Validar información de reserva\", () => {\r",
+							"var jsonData = pm.response.json()\r",
+							"\r",
+							"var firstname = jsonData.booking.firstname\r",
+							"var lastname = jsonData.booking.lastname\r",
+							"var totalprice = jsonData.booking.totalprice\r",
+							"\r",
+							"pm.environment.set(\"Firstname\", firstname)\r",
+							"pm.environment.set(\"Lastname\", lastname)\r",
+							"pm.environment.set(\"totalprice\", totalprice)\r",
+							"\r",
+							"\r",
+							"pm.expect(jsonData.booking.firstname).to.not.be.empty\r",
+							"pm.expect(jsonData.booking.lastname).to.not.be.empty\r",
+							"pm.expect(jsonData.booking.totalprice).to.not.be.null\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstname\": \"Caro\",\r\n  \"lastname\": \"Barros\",\r\n  \"totalprice\": 150,\r\n  \"depositpaid\": false,\r\n  \"bookingdates\": {\r\n    \"checkin\": \"2024-03-15\",\r\n    \"checkout\": \"2024-03-10\"\r\n  },\r\n  \"additionalneeds\": \"None\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/booking/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener reserva por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar información correcta\", () => {\r",
+							"var jsonData = pm.response.json()\r",
+							"\r",
+							"\r",
+							"\r",
+							"var firstname = pm.environment.get(\"Firstname\")\r",
+							"var lastname = pm.environment.get(\"Lastname\")\r",
+							"var totalprice = pm.environment.get(\"totalprice\")\r",
+							"\r",
+							"pm.expect(jsonData.firstname).to.eq(firstname)\r",
+							"pm.expect(jsonData.lastname).to.eq(lastname)\r",
+							"pm.expect(jsonData.totalprice).to.eq(totalprice)\r",
+							"})\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/booking/{{BookingId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						"{{BookingId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar información de reserva",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar actualizacion de reserva\", () => {\r",
+							"    var jsonData = pm.response.json()\r",
+							"\r",
+							"   var firstname = pm.environment.get(\"nameToUpdate\")\r",
+							"   var lastname = pm.environment.get(\"lastNameToUpdate\")\r",
+							"   var totalprice = pm.environment.get(\"totalPriceToUpdate\")\r",
+							"\r",
+							"    pm.expect(jsonData.firstname).to.eq(firstname)\r",
+							"    pm.expect(jsonData.lastname).to.eq(lastname)\r",
+							"    pm.expect(jsonData.totalprice).to.eq(parseInt(totalprice))\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.environment.get(\"lastNameToUpdate\"))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token=abc123"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic 6ad3550b45de78c",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" :  \"{{nameToUpdate}}\",\n    \"lastname\" : \"{{lastNameToUpdate}}\",\n    \"totalprice\" : {{totalPriceToUpdate}},\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/booking/{{BookingId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						"{{BookingId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar registro",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar el Código de Estado\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar Respuesta\", () => {\r",
+							"    var jsonData = pm.response.text()\r",
+							"\r",
+							"\r",
+							"    pm.expect(jsonData).to.include(\"Created\")\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token=abc123"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/booking/{{BookingId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						"{{BookingId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar parcialmente la reserva",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar el Código de Estado 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar actualizacion parcial\", () => {\r",
+							"    var jsonData = pm.response.json()\r",
+							"\r",
+							"    var firstname = pm.environment.get(\"firstnamePatch\")\r",
+							"    var lastname = pm.environment.get(\"lastnamePatch\")\r",
+							"  \r",
+							"\r",
+							"    pm.expect(jsonData.firstname).to.eq(firstname)\r",
+							"    pm.expect(jsonData.lastname).to.eq(lastname)\r",
+							"\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token=abc123"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"{{firstnamePatch}}\",\n    \"lastname\" : \"{{lastnamePatch}}\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/booking/{{BookingId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						"{{BookingId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener reservas por IDs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar el Código de Estado\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validar reservas por IDs\", () => {\r",
+							"    var jsonData = pm.response.json()\r",
+							"    pm.expect(jsonData).to.be.an(\"array\")\r",
+							"    for (i=0; i<jsonData.length; i++) {\r",
+							"      pm.expect(jsonData[i].bookingid).to.be.a(\"number\")\r",
+							"    }\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/booking/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{username}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
